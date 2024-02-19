@@ -13,11 +13,14 @@
 #include <math.h>
 
 /*	************************************************************************* */
-//	COSTANTI E VARIABILI GLOBALI
+//	ENUMERAZIONI, COSTANTI E VARIABILI GLOBALI
 
 #define MATRIX_WIDTH 4
 #define MATRIX_HEIGHT 4
 #define MATRIX_DEPTH 3
+
+#define AXIS_LENGTH 100
+#define AXIS_OPACITY 0.2
 
 /*	************************************************************************* */
 //	FUNZIONI ACCESSORIE
@@ -32,7 +35,7 @@ void freeMatrix(Data** mat, int rows) {
 
 float* getNormal(double **points, const int n_vert, const int start) {
 
-	float* ret = (float*) calloc(3, float);
+	float* ret = (float*) calloc(3, sizeof(float));
 
 	float x_ret = 0.0, y_ret = 0.0, z_ret = 0.0;
 	float x_diff = 0.0, y_diff = 0.0, z_diff = 0.0;
@@ -70,7 +73,7 @@ float* getNormal(double **points, const int n_vert, const int start) {
 
 float* getCenter(double **points, const int n_vert, const int start) {
 
-	float* ret = (float*) calloc(3, float);
+	float* ret = (float*) calloc(3, sizeof(float));
 
 	float x_ret = 0.0;
 	float y_ret = 0.0;
@@ -104,24 +107,20 @@ void toHomogeneous(GLfloat cp[MATRIX_WIDTH][MATRIX_HEIGHT][MATRIX_DEPTH], GLfloa
 }
 
 void drawAxis() {
-	Color c;
 	glBegin(GL_LINES);
 
 		// X_AXIS
-		c = RED;
-		glColor4f(c.getRed(), c.getGreen(), c.getBlue(), AXIS_OPACITY);
+		glColor4f(RED[0], RED[1], RED[2], AXIS_OPACITY);
 		glVertex3f(-AXIS_LENGTH, 0.0, 0.0);
 		glVertex3f(AXIS_LENGTH, 0.0, 0.0);
 
 		// Y_AXIS
-		c = GREEN;
-		glColor4f(c.getRed(), c.getGreen(), c.getBlue(), AXIS_OPACITY);
+		glColor4f(GREEN[0], GREEN[1], GREEN[2], AXIS_OPACITY);
 		glVertex3f(0.0, -AXIS_LENGTH, 0.0);
 		glVertex3f(0.0, AXIS_LENGTH, 0.0);
 
 		// Z_AXIS
-		c = CYAN;
-		glColor4f(c.getRed(), c.getGreen(), c.getBlue(), AXIS_OPACITY);
+		glColor4f(CYAN[0], CYAN[1], CYAN[2], AXIS_OPACITY);
 		glVertex3f(0.0, 0.0, -AXIS_LENGTH);
 		glVertex3f(0.0, 0.0, AXIS_LENGTH);
 	

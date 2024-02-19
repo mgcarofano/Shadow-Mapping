@@ -19,10 +19,26 @@
 #include <stdio.h>
 #include <math.h>
 
+/*	************************************************************************* */
+//	ENUMERAZIONI, COSTANTI E VARIABILI GLOBALI
+
 #define WINDOW_WIDTH 750.0
 #define WINDOW_HEIGHT 750.0
 #define WINDOW_X_POSITION 400.0
 #define WINDOW_Y_POSITION 100.0
+
+float x_position = 0.0;
+float y_position = 0.0;
+float z_position = 0.0;
+
+float fovy = 45.0;
+float aspect = 1.0;
+float zNear = 0.1;
+float zFar = 100.0;
+
+float e_rad = 20.0;
+float e_lat = 0.0;
+float e_long = 0.0;
 
 /*	************************************************************************* */
 //	FUNZIONI ACCESSORIE
@@ -46,163 +62,86 @@ float getRelative(int coord, float dimension) {
 	return relative;
 }
 
-Point computeEyePoint() {
-	float x_ret = 0.0, y_ret = 0.0, z_ret = 0.0;
-
-	x_ret = e_rad * cos(e_lat * M_PI/180) * cos(e_long * M_PI/180);
-	y_ret = e_rad * sin(e_lat * M_PI/180);
-	z_ret = e_rad * cos(e_lat * M_PI/180) * sin(e_long * M_PI/180);
-
+void computeEyePoint(float* eyePoint) {
+	eyePoint[0] = e_rad * cos(e_lat * M_PI/180) * cos(e_long * M_PI/180);
+	eyePoint[1] = e_rad * sin(e_lat * M_PI/180);
+	eyePoint[2] = e_rad * cos(e_lat * M_PI/180) * sin(e_long * M_PI/180);
 	// printf("e_rad: %f, e_lat: %f, e_long: %f\n", e_rad, e_lat, e_long);
-
-	return Point(x_ret, y_ret, z_ret);
 }
 
 /*	************************************************************************* */
 //	FUNZIONI PER INTERAZIONE DA MOUSE E TASTIERA
 
-void q_func(Example e) {
-	switch(e)
-	{
-		default:
-			break;
-	}
+void q_func() {
+	
 }
 
-void a_func(Example e) {
-	switch(e)
-	{
-		default:
-			break;
-	}
+void a_func() {
+	
 }
 
-void w_func(Example e) {
-	switch(e)
-	{
-		default:
-			break;
-	}
+void w_func() {
+	
 }
 
-void s_func(Example e) {
-	switch(e)
-	{
-		default:
-			break;
-	}
+void s_func() {
+	
 }
 
-void e_func(Example e) {
-	switch(e)
-	{
-		default:
-			break;
-	}
+void e_func() {
+	
 }
 
-void d_func(Example e) {
-	switch(e)
-	{
-		default:
-			break;
-	}
+void d_func() {
+	
 }
 
-void i_func(Example e) {
-	switch(e)
-	{
-		default:
-			break;
-	}
+void i_func() {
+	
 }
 
-void j_func(Example e) {
-	switch (e)
-	{
-		default:
-			break;
-	}
+void j_func() {
+	
 }
 
-void k_func(Example e) {
-	switch(e)
-	{
-		default:
-			break;
-	}
+void k_func() {
+	
 }
 
-void l_func(Example e) {
-	switch (e)
-	{
-		default:
-			break;
-	}
+void l_func() {
+	
 }
 
-void r_func(Example e) {
-	switch(e)
-	{
-		default:
-			break;
-	}
+void r_func() {
+	
 }
 
-void space_func(Example e) {
-	switch(e)
-	{
-		default:
-			break;
-	}
+void space_func() {
+	
 }
 
-void up_func(Example e) {
-	switch(e)
-	{
-		default:
-			break;
-	}
+void up_func() {
+	
 }
 
-void down_func(Example e) {
-	switch(e)
-	{
-		default:
-			break;
-	}
+void down_func() {
+	
 }
 
-void left_key_func(Example e) {
-	switch(e)
-	{
-		default:
-			break;
-	}
+void left_key_func() {
+	
 }
 
-void right_key_func(Example e) {
-	switch(e)
-	{
-		default:
-			break;
-	}
+void right_key_func() {
+	
 }
 
-void left_mouse_func(Example e, int state, int x, int y) {
-	switch(e)
-	{
-		default:
-			break;
-	}
+void left_mouse_func(int state, int x, int y) {
+	
 }
 
-void right_mouse_func(Example e, int state, int x, int y) {
-	switch(e)
-	{
-		default:
-			break;
-	}
+void right_mouse_func(int state, int x, int y) {
+	
 }
 
 /*	************************************************************************* */
