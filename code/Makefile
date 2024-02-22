@@ -1,9 +1,9 @@
 CC=clang++
-LIB=./libraries/GLFW/
-file=example
+LIB=./libraries/GLFW
+file=shadow-mapping-tutorial/main
 
 main:
-	$(CC) -I$(LIB) -L$(LIB) -lglfw3 \
+	$(CC) -I $(LIB) -L $(LIB) -lglfw3 \
 		-framework OpenGL \
 		-framework GLUT \
 		-framework Cocoa \
