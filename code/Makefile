@@ -1,6 +1,6 @@
 CC=clang++
 LIB=./libraries/GLFW
-file=shadow-mapping-tutorial/main
+file=shadow-mapping-tutorial/shadow-mapping
 
 main:
 	$(CC) -I $(LIB) -L $(LIB) -lglfw3 \

@@ -1,36 +1,74 @@
-//////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+//
 //	TIMER.h
-//	Timer class
+//	Timer class declaration
+//
 //	Downloaded from: www.paulsprojects.net
-//	Created:	20th July 2002
 //
 //	Copyright (c) 2006, Paul Baker
-//	Distributed under the New BSD Licence. (See accompanying file License.txt or copy at
-//	http://www.paulsprojects.net/NewBSDLicense.txt)
-//////////////////////////////////////////////////////////////////////////////////////////
+//	Distributed under the New BSD Licence.
+//	http://www.paulsprojects.net/NewBSDLicense.txt
+//
+///////////////////////////////////////////////////////////////////////////////
+
+#include <sys/time.h>
+
+double timeGetTime() {
+	struct timeval t;
+	double t_now = 0.0;
+
+	gettimeofday(&t, NULL);
+	t_now = t.tv_sec + (t.tv_usec / 1000000.0);
+	
+	return t_now;
+}
 
 #ifndef TIMER_H
 #define TIMER_H
 
-class TIMER
-{
+class TIMER {
+
 public:
-	TIMER()	:	isPaused(false)
-	{	Reset();	}
-	~TIMER()	{}
 
-	void Reset();
-	double GetTime();
+	//constructor
+	TIMER()	: isPaused(false) { Reset(); }
 
-	void Pause();
-	void Unpause();
+	//destructor
+	~TIMER() {}
+
+	void Reset() { startTime = timeGetTime(); };
+
+	double GetTime() {
+		return (isPaused)
+			? pauseTime - startTime
+			: (timeGetTime()) - startTime;
+	};
+
+	void Pause() {
+		// Only pause if currently unpaused
+		if(isPaused) return;
+
+		isPaused = true;
+		pauseTime = timeGetTime();
+	};
+
+	void Unpause() {
+		//Only unpause if currently paused
+		if(!isPaused) return;
+
+		isPaused = false;
+		
+		//Update start time to reflect pause
+		startTime += (timeGetTime() - pauseTime);
+	};
 
 protected:
-	double startTime;
 
+	//member variables
+	double startTime;
 	bool isPaused;
 	double pauseTime;
+
 };
 
-#include "TIMER.cpp"
 #endif	//TIMER_H

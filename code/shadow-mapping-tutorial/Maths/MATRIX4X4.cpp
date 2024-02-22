@@ -1,27 +1,17 @@
-//////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+//
 //	MATRIX4X4.cpp
-//	function definitions for 4x4 matrix class
+//	Function definitions for 4x4 matrix class
+//
 //	Downloaded from: www.paulsprojects.net
-//	Created:	20th July 2002
-//	Updated:	19th August 2002	-	Corrected 2nd SetPerspective for n!=1.0f
-//				26th September 2002	-	Added nudge to prevent artifacts with infinite far plane
-//									-	Improved speed
-//				7th November 2002	-	Added Affine Inverse functions
-//									-	Changed constructors
-//									-	Added special cases for row3 = (0, 0, 0, 1)
-//				17th December 2002	-	Converted from radians to degrees for consistency
-//										with OpenGL. Should have been done a long time ago...
 //
 //	Copyright (c) 2006, Paul Baker
-//	Distributed under the New BSD Licence. (See accompanying file License.txt or copy at
-//	http://www.paulsprojects.net/NewBSDLicense.txt)
-//////////////////////////////////////////////////////////////////////////////////////////	
+//	Distributed under the New BSD Licence.
+//	http://www.paulsprojects.net/NewBSDLicense.txt
+//
+///////////////////////////////////////////////////////////////////////////////
 
 #include <memory.h>
-
-MATRIX4X4::MATRIX4X4() {
-	LoadIdentity();
-}
 
 MATRIX4X4::MATRIX4X4(float e0, float e1, float e2, float e3,
 					float e4, float e5, float e6, float e7,
@@ -110,6 +100,7 @@ VECTOR4D MATRIX4X4::GetColumn(int position) const
 void MATRIX4X4::LoadIdentity(void)
 {
 	memset(entries, 0, 16*sizeof(float));
+
 	entries[0]=1.0f;
 	entries[5]=1.0f;
 	entries[10]=1.0f;
@@ -220,11 +211,6 @@ MATRIX4X4 MATRIX4X4::operator/(const float rhs) const
 	return (*this)*temp;
 }
 
-MATRIX4X4 operator*(float scaleFactor, const MATRIX4X4 & rhs)
-{
-	return rhs*scaleFactor;
-}
-
 bool MATRIX4X4::operator==(const MATRIX4X4 & rhs) const
 {
 	for(int i=0; i<16; i++) {
@@ -233,36 +219,6 @@ bool MATRIX4X4::operator==(const MATRIX4X4 & rhs) const
 	}
 
 	return true;
-}
-
-bool MATRIX4X4::operator!=(const MATRIX4X4 & rhs) const
-{
-	return !((*this)==rhs);
-}
-
-void MATRIX4X4::operator+=(const MATRIX4X4 & rhs)
-{
-	(*this)=(*this)+rhs;
-}
-
-void MATRIX4X4::operator-=(const MATRIX4X4 & rhs)
-{
-	(*this)=(*this)-rhs;
-}
-
-void MATRIX4X4::operator*=(const MATRIX4X4 & rhs)
-{
-	(*this)=(*this)*rhs;
-}
-
-void MATRIX4X4::operator*=(const float rhs)
-{
-	(*this)=(*this)*rhs;
-}
-
-void MATRIX4X4::operator/=(const float rhs)
-{
-	(*this)=(*this)/rhs;
 }
 
 MATRIX4X4 MATRIX4X4::operator-(void) const
@@ -277,9 +233,9 @@ MATRIX4X4 MATRIX4X4::operator-(void) const
 
 VECTOR4D MATRIX4X4::operator*(const VECTOR4D rhs) const {
 	return VECTOR4D(
-		entries[0]*rhs.x + entries[4]*rhs.y + entries[8]*rhs.z + entries[12]*rhs.w,
-		entries[1]*rhs.x + entries[5]*rhs.y + entries[9]*rhs.z + entries[13]*rhs.w,
-		entries[2]*rhs.x + entries[6]*rhs.y + entries[10]*rhs.z + entries[14]*rhs.w,
-		entries[3]*rhs.x + entries[7]*rhs.y + entries[11]*rhs.z + entries[15]*rhs.w
+		entries[0]*rhs.GetX() + entries[4]*rhs.GetY() + entries[8]*rhs.GetZ() + entries[12]*rhs.GetW(),
+		entries[1]*rhs.GetX() + entries[5]*rhs.GetY() + entries[9]*rhs.GetZ() + entries[13]*rhs.GetW(),
+		entries[2]*rhs.GetX() + entries[6]*rhs.GetY() + entries[10]*rhs.GetZ() + entries[14]*rhs.GetW(),
+		entries[3]*rhs.GetX() + entries[7]*rhs.GetY() + entries[11]*rhs.GetZ() + entries[15]*rhs.GetW()
 	);
 }
