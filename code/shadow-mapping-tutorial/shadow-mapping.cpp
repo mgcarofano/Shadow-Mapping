@@ -1,4 +1,4 @@
-/*
+/* 
 
 	shadow-mapping.cpp
 	di Mario Gabriele Carofano
@@ -6,7 +6,15 @@
 
 */
 
-/*	************************************************************************* */
+/*	************************************************************************
+	DESCRIZIONE
+
+	In questo file è fornita una possibile implementazione dello Shadow
+	Mapping da una singola fonte luminosa.
+	
+*/
+
+/*	************************************************************************ */
 //	LIBRERIE
 
 #define GL_SILENCE_DEPRECATION
@@ -18,9 +26,10 @@
 #include "Maths/VECTOR4D.h"
 #include "Maths/MATRIX4X4.h"
 
+#include "SCENE.cpp"
 #include "TIMER.h"
 
-/*	************************************************************************* */
+/*	************************************************************************ */
 //  ENUMERAZIONI, COSTANTI E VARIABILI GLOBALI
 
 #define EPSILON 0.01f
@@ -39,7 +48,8 @@ const int shadowMapSize=512;
 GLuint shadowMapTexture;
 
 //window size
-int windowWidth, windowHeight;
+int windowWidth = WINDOW_WIDTH;
+int windowHeight = WINDOW_HEIGHT;
 
 //Matrices
 MATRIX4X4 lightProjectionMatrix, lightViewMatrix;
@@ -51,52 +61,17 @@ static MATRIX4X4 biasMatrix(
 	0.5f, 0.5f, 0.5f, 1.0f
 );	//bias from [-1, 1] to [0, 1]
 
-// Angle of rotation of the spheres.
+// Angolo di rotazione delle sfere.
 float angle = 0.0f;
 
-// Speed of the animation.
+// Velocità dell'animazione.
 int animation_speed = 0;
 
-/*	************************************************************************* */
+// Scelta della scena da disegnare.
+int scene = SCENE1;
+
+/*	************************************************************************ */
 //  FUNZIONI ACCESSORIE
-
-// Draws the scene
-void DrawScene(float angle) {
-	
-	// BASE
-	glPushMatrix();
-		glColor3f(0.0f, 0.0f, 1.0f);
-		glScalef(1.0f, 0.05f, 1.0f);
-		glutSolidCube(4.0f);
-	glPopMatrix();
-
-	// TORUS
-	glPushMatrix();
-		glColor3f(1.0f, 0.0f, 0.0f);
-		glTranslatef(0.0f, 0.5f, 0.0f);
-		glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
-		glutSolidTorus(0.2, 0.5, 24, 48);
-	glPopMatrix();
-
-	// SPHERES
-	glPushMatrix();
-		glRotatef(angle, 0.0f, 1.0f, 0.0f);
-		glColor3f(0.0f, 1.0f, 0.0f);
-
-		glTranslatef(0.45f, 1.0f, 0.45f);
-		glutSolidSphere(0.2, 24, 24);
-
-		glTranslatef(-0.9f, 0.0f, 0.0f);
-		glutSolidSphere(0.2, 24, 24);
-
-		glTranslatef(0.0f, 0.0f,-0.9f);
-		glutSolidSphere(0.2, 24, 24);
-
-		glTranslatef(0.9f, 0.0f, 0.0f);
-		glutSolidSphere(0.2, 24, 24);
-	glPopMatrix();
-
-}
 
 //Called on window resize
 void WindowResize(int w, int h) {
@@ -218,7 +193,7 @@ void FirstStep(void) {
 	glColorMask(0, 0, 0, 0);
 	
 	//Draw the scene
-	DrawScene(angle);
+	DrawScene(angle, scene);
 
 	//Read the depth buffer into the shadow map texture
 	glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
@@ -250,7 +225,7 @@ void SecondStep(void) {
 	glEnable(GL_LIGHT1);
 	glEnable(GL_LIGHTING);
 
-	DrawScene(angle);
+	DrawScene(angle, scene);
 }
 
 //3rd step - Draw with bright light
@@ -306,7 +281,7 @@ void ThirdStep(void) {
 	glAlphaFunc(GL_GEQUAL, 0.99f);
 	glEnable(GL_ALPHA_TEST);
 
-	DrawScene(angle);
+	DrawScene(angle, scene);
 }
 
 //Called to draw scene
@@ -356,7 +331,7 @@ void Display(void) {
 
 }
 
-/*	************************************************************************* */
+/*	************************************************************************ */
 //  FUNZIONI PER INTERAZIONE DA TASTIERA
 
 GLvoid keyboardOrdFunc(unsigned char key, int x, int y) {
@@ -447,7 +422,7 @@ GLvoid keyboardOrdFunc(unsigned char key, int x, int y) {
 		}
 		case ' ':
         {
-			space_func();
+			if (++scene > NUM_SCENE) scene = SCENE1;
 			break;
 		}
 		default:
@@ -487,7 +462,7 @@ GLvoid keyboardSpecFunc(int key, int x, int y) {
 
 }
 
-/*	************************************************************************* */
+/*	************************************************************************ */
 //  FUNZIONI PER INTERAZIONE DA MOUSE
 
 GLvoid mouseOrdFunc(int button, int state, int x, int y) {
@@ -509,7 +484,7 @@ GLvoid mouseOrdFunc(int button, int state, int x, int y) {
 
 }
 
-/*	************************************************************************* */
+/*	************************************************************************ */
 //  MAIN
 
 int main(int argc, char** argv) {
@@ -517,7 +492,7 @@ int main(int argc, char** argv) {
 
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
 	glutInitWindowPosition(WINDOW_X_POSITION, WINDOW_Y_POSITION);
-	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+	glutInitWindowSize(windowWidth, windowHeight);
 	glutCreateWindow("Shadow Mapping");
 
 	if(!Init())
@@ -534,7 +509,7 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
-/*	************************************************************************* */
+/*	************************************************************************ */
 /*	RIFERIMENTI
 	
 */
