@@ -26,6 +26,11 @@
 #include "Maths/VECTOR4D.h"
 #include "Maths/MATRIX4X4.h"
 
+#include "Shaders/Shader.h"
+#include "Shaders/VAO.h"
+#include "Shaders/EBO.h"
+#include "Shaders/VBO.h"
+
 #include "SCENE.cpp"
 #include "TIMER.h"
 
@@ -504,8 +509,18 @@ int main(int argc, char** argv) {
 	glutKeyboardFunc(keyboardOrdFunc);
 	glutSpecialFunc(keyboardSpecFunc);
 
+	Shader shaderProgram("./Shaders/vertex.shader", "./Shaders/fragment.shader");
+
+	// VAO vao;
+	// vao.Bind();
+
+	shaderProgram.Use();
+	// vao.Bind();
+
 	glutMainLoop();
 
+	// vao.Delete();
+	shaderProgram.Delete();
 	return 0;
 }
 
