@@ -21,7 +21,7 @@
 #include <GLUT/glut.h>
 #include "libraries/GLFW/glfw3.h"
 
-#include "libraries/controller.cpp"
+#include "libraries/color.cpp"
 #include "libraries/TIMER.h"
 
 #include "libraries/Maths/VECTOR3D.h"
@@ -37,6 +37,11 @@
 
 /*	************************************************************************ */
 //  ENUMERAZIONI, COSTANTI E VARIABILI GLOBALI
+
+#define WINDOW_WIDTH 750.0
+#define WINDOW_HEIGHT 750.0
+#define WINDOW_X_POSITION 400.0
+#define WINDOW_Y_POSITION 100.0
 
 #define EPSILON 0.01f
 
@@ -587,41 +592,11 @@ GLvoid keyboardOrdFunc(unsigned char key, int x, int y) {
         {
 			exit(0);
 		}
-		case 'q':
-		case 'Q':
-        {
-			q_func();
-			break;
-		}
-		case 'a':
-		case 'A':
-        {
-			a_func();
-			break;
-		}
-		case 'w':
-		case 'W':
-        {
-			w_func();
-			break;
-		}
 		case 's':
 		case 'S':
         {
 			toggleShadowMap();
 			performance = true;
-			break;
-		}
-		case 'e':
-		case 'E':
-        {
-			e_func();
-			break;
-		}
-		case 'd':
-		case 'D':
-        {
-			d_func();
 			break;
 		}
 		case 'r':
@@ -630,24 +605,6 @@ GLvoid keyboardOrdFunc(unsigned char key, int x, int y) {
 			timer.Reset();
 			animation_speed = 0;
 			performance = true;
-			break;
-		}
-		case 'i':
-		case 'I':
-        {
-			i_func();
-			break;
-		}
-		case 'j':
-		case 'J':
-        {
-			j_func();
-			break;
-		}
-		case 'k':
-		case 'K':
-        {
-			k_func();
 			break;
 		}
 		case 'l':
@@ -721,11 +678,11 @@ GLvoid mouseOrdFunc(int button, int state, int x, int y) {
 
 	switch(button) {
 		case GLUT_LEFT_BUTTON: {
-			left_mouse_func(state, x, y);
+			// left_mouse_func(state, x, y);
 			break;
 		}
 		case GLUT_RIGHT_BUTTON: {
-			right_mouse_func(state, x, y);
+			// right_mouse_func(state, x, y);
 			break;
 		}
 		default:
