@@ -18,6 +18,7 @@ public:
 	GLuint ID;
 
 	// Load a vertex and a fragment shader from file
+	Shader() {};
 	Shader(const char* vertexPath, const char* fragmentPath);
 	~Shader() {}
 

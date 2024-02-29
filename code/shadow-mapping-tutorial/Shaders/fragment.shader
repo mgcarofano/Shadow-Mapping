@@ -1,8 +1,6 @@
-#version 330 core
+#version 110
 
-out vec4 FragColor;
- 
-void main() {
-	FragColor = vec4(vec3(gl_FragCoord.z), 1.0f);
-	// FragColor = vec4(0.8f, 0.3f, 0.02f, 1.0f);
+void main()
+{
+    gl_FragColor = vec4(vec3(depthValue), 1.0);
 }
