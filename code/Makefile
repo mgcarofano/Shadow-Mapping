@@ -1,5 +1,5 @@
 CC=clang++
-LIB=../libraries/GLFW
+LIB=./libraries/GLFW
 file=shadow-mapping
 
 main:

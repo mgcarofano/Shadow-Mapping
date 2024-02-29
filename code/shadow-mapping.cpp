@@ -19,20 +19,21 @@
 
 #define GL_SILENCE_DEPRECATION
 #include <GLUT/glut.h>
-#include "../libraries/GLFW/glfw3.h"
-#include "../libraries/controller.cpp"
+#include "libraries/GLFW/glfw3.h"
 
-#include "Maths/VECTOR3D.h"
-#include "Maths/VECTOR4D.h"
-#include "Maths/MATRIX4X4.h"
+#include "libraries/controller.cpp"
+#include "libraries/TIMER.h"
 
-// #include "Shaders/Shader.h"
-// #include "Shaders/VAO.h"
-// #include "Shaders/EBO.h"
-// #include "Shaders/VBO.h"
+#include "libraries/Maths/VECTOR3D.h"
+#include "libraries/Maths/VECTOR4D.h"
+#include "libraries/Maths/MATRIX4X4.h"
+
+// #include "libraries/Shaders/Shader.h"
+// #include "libraries/Shaders/VAO.h"
+// #include "libraries/Shaders/EBO.h"
+// #include "libraries/Shaders/VBO.h"
 
 #include "SCENE.cpp"
-#include "TIMER.h"
 
 /*	************************************************************************ */
 //  ENUMERAZIONI, COSTANTI E VARIABILI GLOBALI
