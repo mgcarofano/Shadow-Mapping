@@ -180,11 +180,13 @@ void UpdateScene() {
 	glPopMatrix();
 }
 
-void UpdateEyePosition() {
+void UpdateEyePosition(int eyepos) {
 
-	switch(eyePosition) {
+	switch(eyepos) {
 		case EYE_LIGHT:
 		{
+			eyePosition = EYE_LIGHT;
+
 			glMatrixMode(GL_PROJECTION);
 			glLoadMatrixf(lightProjectionMatrix);
 
@@ -197,6 +199,8 @@ void UpdateEyePosition() {
 		}
 		case EYE_CAMERA:
 		{
+			eyePosition = EYE_CAMERA;
+
 			glMatrixMode(GL_PROJECTION);
 			glLoadMatrixf(cameraProjectionMatrix);
 			
@@ -296,8 +300,7 @@ void FirstStep(void) {
 	
 	// Si impostano le matrici della luce per 'GL_PROJECTION' e 'MODELVIEW'
 	// Use viewport the same size as the shadow map
-	eyePosition = EYE_LIGHT;
-	UpdateEyePosition();
+	UpdateEyePosition(EYE_LIGHT);
 
 	//Draw back faces into the shadow map
 	glCullFace(GL_FRONT);
@@ -327,8 +330,7 @@ void SecondStep(void) {
 
 	// Si impostano le matrici della camera per 'GL_PROJECTION' e 'MODELVIEW'
 	// Use viewport the same size as the window
-	eyePosition = EYE_CAMERA;
-	UpdateEyePosition();
+	UpdateEyePosition(EYE_CAMERA);
 
 	//Use dim light to represent shadowed areas
 	glLightfv(GL_LIGHT1, GL_POSITION, VECTOR4D(lightPosition));
@@ -346,8 +348,7 @@ void ThirdStep(void) {
 
 	// Si impostano le matrici della camera per 'GL_PROJECTION' e 'MODELVIEW'
 	// Use viewport the same size as the window
-	eyePosition = EYE_CAMERA;
-	UpdateEyePosition();
+	UpdateEyePosition(EYE_CAMERA);
 
 	// Si attivano le luci della scena
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, WHITE);
@@ -519,7 +520,7 @@ void DisplayScene(void) {
 
 	if (eyePosition == EYE_LIGHT) {
 		shadowMapVisibility = false;
-		UpdateEyePosition();
+		UpdateEyePosition(EYE_LIGHT);
 		DrawScene(angle, scene);
 	} else {
 		// Si disegna la scena con o senza shadow mapping
