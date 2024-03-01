@@ -43,8 +43,6 @@
 #define WINDOW_X_POSITION 400.0
 #define WINDOW_Y_POSITION 100.0
 
-#define EPSILON 0.01f
-
 // Shader
 // Shader shaderProgram;
 
@@ -55,15 +53,16 @@ TIMER timer;
 #define EYE_LIGHT 1
 #define EYE_CAMERA 2
 
+int eyePosition = EYE_CAMERA;
+
 GLfloat cameraPositions[3][3] = {
+	// {1.0f, 1.5f, -3.0f},	// ESEMPIO-PRESENTAZIONE
 	{-2.5f, 3.5f, -2.5f},	// SCENE1
 	{-4.5f, 3.5f, -2.5f},	// SCENE2
 	{-2.5f, 2.0f, -2.5f}	// SCENE3
 };
 
 VECTOR3D lightPosition(2.0f, 3.0f,-2.0f);
-
-int eyePosition = EYE_CAMERA;
 
 // Shadow map info
 bool shadowMapVisibility = true;
@@ -305,7 +304,7 @@ void FirstStep(void) {
 	//Draw back faces into the shadow map
 	glCullFace(GL_FRONT);
 
-	// //Disable color writes, and use flat shading for speed
+	//Disable color writes, and use flat shading for speed
 	glShadeModel(GL_FLAT);
 	glColorMask(0, 0, 0, 0);
 	
@@ -315,9 +314,9 @@ void FirstStep(void) {
 	//Read the depth buffer into the shadow map texture
 	glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
 	glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 0, 0, shadowMapSize, shadowMapSize, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
 
 	//restore states
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glCullFace(GL_BACK);
 	glShadeModel(GL_SMOOTH);
 	glColorMask(1, 1, 1, 1);
@@ -519,8 +518,10 @@ void DisplayScene(void) {
 	angle = timer.GetTime() * animation_speed;
 
 	if (eyePosition == EYE_LIGHT) {
+	// if (true) {
 		shadowMapVisibility = false;
 		UpdateEyePosition(EYE_LIGHT);
+		// UpdateEyePosition(EYE_CAMERA); // ESEMPIO-PRESENTAZIONE
 		DrawScene(angle, scene);
 	} else {
 		// Si disegna la scena con o senza shadow mapping

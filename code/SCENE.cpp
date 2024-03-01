@@ -39,6 +39,7 @@ void Scene1(float angle) {
 		glRotatef(angle, 0.0f, 1.0f, 0.0f);
 		glColor3fv(GREEN);
 
+		// glTranslatef(0.45f, 1.0f, 0.0f); // ESEMPIO-PRESENTAZIONE
 		glTranslatef(0.45f, 1.0f, 0.45f);
 		glutSolidSphere(0.2, 24, 24);
 
