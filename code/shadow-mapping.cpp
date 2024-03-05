@@ -65,9 +65,10 @@ GLfloat cameraPositions[3][3] = {
 VECTOR3D lightPosition(2.0f, 3.0f,-2.0f);
 
 // Shadow map info
+GLuint shadowMapTexture;
 bool shadowMapVisibility = true;
 const int shadowMapSize = 512;
-GLuint shadowMapTexture;
+
 // GLfloat shadowMapVertices[4][5] = {
 // 	{0.55, 0.95, 0.0, 0.0, 1.0},	// D
 // 	{0.55, 0.55, 0.0, 0.0, 0.0},	// A
@@ -400,7 +401,7 @@ void ThirdStep(void) {
 		glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE_ARB, GL_INTENSITY);
 
 		//Set alpha test to discard false comparisons
-		glAlphaFunc(GL_GEQUAL, 0.99f);
+		glAlphaFunc(GL_GEQUAL, 1.0f);
 		glEnable(GL_ALPHA_TEST);
 	}
 
