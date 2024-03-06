@@ -105,7 +105,7 @@ int animation_speed = 0;
 int scene = SCENE1;
 
 // Execution performance
-#define CSV_TIME_PATH "./time.csv"
+#define CSV_TIME_PATH "../output/time.csv"
 #define INIT 0
 #define SHADOW 1
 #define NO_SHADOW 2
