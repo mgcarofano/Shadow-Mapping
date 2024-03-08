@@ -66,7 +66,6 @@ VECTOR3D lightPosition(2.0f, 3.0f,-2.0f);
 
 // Shadow map info
 GLuint shadowMapTexture;
-bool shadowMapVisibility = true;
 const int shadowMapSize = 512;
 
 // GLfloat shadowMapVertices[4][5] = {
@@ -102,10 +101,10 @@ float angle = 0.0f;
 int animation_speed = 0;
 
 // Scelta della scena da disegnare.
-int scene = SCENE1;
+int scene = SCENE3;
 
 // Execution performance
-#define CSV_TIME_PATH "../output/time.csv"
+#define CSV_TIME_PATH "../output/time-shadow_mapping.csv"
 #define INIT 0
 #define SHADOW 1
 #define NO_SHADOW 2
@@ -193,8 +192,7 @@ void UpdateEyePosition(int eyepos) {
 			glMatrixMode(GL_MODELVIEW);
 			glLoadMatrixf(lightViewMatrix);
 
-			if (shadowMapVisibility) glViewport(0, 0, shadowMapSize, shadowMapSize);
-			else glViewport(0, 0, windowWidth, windowHeight);
+			glViewport(0, 0, shadowMapSize, shadowMapSize);
 			break;
 		}
 		case EYE_CAMERA:
@@ -213,16 +211,8 @@ void UpdateEyePosition(int eyepos) {
 	}
 }
 
-bool toggleShadowMap() {
-	shadowMapVisibility = !shadowMapVisibility;
-	return shadowMapVisibility;
-}
-
 bool toggleEyePosition() {
-	if (eyePosition == EYE_LIGHT){
-		eyePosition = EYE_CAMERA;
-		shadowMapVisibility = true;
-	}
+	if (eyePosition == EYE_LIGHT) eyePosition = EYE_CAMERA;
 	else eyePosition = EYE_LIGHT;
 	return eyePosition;
 }
@@ -354,56 +344,52 @@ void ThirdStep(void) {
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, WHITE);
 	glLightfv(GL_LIGHT1, GL_SPECULAR, WHITE);
 
-	// Si disegna la scena con o senza shadow mapping
-	if (shadowMapVisibility) {
+	/*
+		Calculate texture matrix for projection.
 
-		/*
-			Calculate texture matrix for projection.
+		The MATRIX4X4 'biasMatrix' takes us from eye space
+		to the light's clip space. It is postmultiplied by the inverse
+		of the current view matrix when specifying texgen.
+	*/
 
-			The MATRIX4X4 'biasMatrix' takes us from eye space
-			to the light's clip space. It is postmultiplied by the inverse
-			of the current view matrix when specifying texgen.
-		*/
+	MATRIX4X4 textureMatrix =
+		biasMatrix
+		* lightProjectionMatrix
+		* lightViewMatrix;
 
-		MATRIX4X4 textureMatrix =
-			biasMatrix
-			* lightProjectionMatrix
-			* lightViewMatrix;
+	//Set up texture coordinate generation.
+	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+	glTexGenfv(GL_S, GL_EYE_PLANE, textureMatrix.GetRow(0));
+	glEnable(GL_TEXTURE_GEN_S);
 
-		//Set up texture coordinate generation.
-		glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-		glTexGenfv(GL_S, GL_EYE_PLANE, textureMatrix.GetRow(0));
-		glEnable(GL_TEXTURE_GEN_S);
+	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+	glTexGenfv(GL_T, GL_EYE_PLANE, textureMatrix.GetRow(1));
+	glEnable(GL_TEXTURE_GEN_T);
 
-		glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-		glTexGenfv(GL_T, GL_EYE_PLANE, textureMatrix.GetRow(1));
-		glEnable(GL_TEXTURE_GEN_T);
+	glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+	glTexGenfv(GL_R, GL_EYE_PLANE, textureMatrix.GetRow(2));
+	glEnable(GL_TEXTURE_GEN_R);
 
-		glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-		glTexGenfv(GL_R, GL_EYE_PLANE, textureMatrix.GetRow(2));
-		glEnable(GL_TEXTURE_GEN_R);
+	glTexGeni(GL_Q, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+	glTexGenfv(GL_Q, GL_EYE_PLANE, textureMatrix.GetRow(3));
+	glEnable(GL_TEXTURE_GEN_Q);
 
-		glTexGeni(GL_Q, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-		glTexGenfv(GL_Q, GL_EYE_PLANE, textureMatrix.GetRow(3));
-		glEnable(GL_TEXTURE_GEN_Q);
+	//Bind & enable shadow map texture
+	glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
+	glEnable(GL_TEXTURE_2D);
 
-		//Bind & enable shadow map texture
-		glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
-		glEnable(GL_TEXTURE_2D);
+	//Enable shadow comparison
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE_ARB, GL_COMPARE_R_TO_TEXTURE);
 
-		//Enable shadow comparison
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE_ARB, GL_COMPARE_R_TO_TEXTURE);
+	//Shadow comparison should be true (ie not in shadow) if r<=texture
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL);
 
-		//Shadow comparison should be true (ie not in shadow) if r<=texture
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL);
+	//Shadow comparison should generate an INTENSITY result
+	glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE_ARB, GL_INTENSITY);
 
-		//Shadow comparison should generate an INTENSITY result
-		glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE_ARB, GL_INTENSITY);
-
-		//Set alpha test to discard false comparisons
-		glAlphaFunc(GL_GEQUAL, 1.0f);
-		glEnable(GL_ALPHA_TEST);
-	}
+	//Set alpha test to discard false comparisons
+	glAlphaFunc(GL_GEQUAL, 1.0f);
+	glEnable(GL_ALPHA_TEST);
 
 	DrawScene(angle, scene);
 }
@@ -467,10 +453,7 @@ void writeTimeCSV(
 	const char* out_path,
 	int scene,
 	int type_input,
-	bool shadowMapVisibility,
 	float animation_speed,
-	double* execution_start,
-	double* execution_end,
 	double* execution_time
 ) {
 
@@ -491,11 +474,11 @@ void writeTimeCSV(
 	}
 
 	fseek(csv_file, 0, SEEK_SET);
-	fprintf(csv_file, "%d,%s,%s,%.1f,%f,%f,%f",
+	fprintf(csv_file, "%d,%s,%s,%.1f,%f",
 		scene, getStringType(type_input),
-		(shadowMapVisibility) ? "true" : "false",
+		"true",
 		animation_speed,
-		execution_start[type_input], execution_end[type_input], execution_time[type_input]
+		execution_time[type_input]
 	);
 
 	fclose(csv_file);
@@ -508,8 +491,7 @@ void writeTimeCSV(
 void DisplayScene(void) {
 
 	if (performance) {
-		if (shadowMapVisibility) execution_start[SHADOW] = timer.GetTime();
-		else execution_start[NO_SHADOW] = timer.GetTime();
+		execution_start[SHADOW] = timer.GetTime();
 	}
 
 	glPointSize(3.0);
@@ -520,14 +502,11 @@ void DisplayScene(void) {
 
 	if (eyePosition == EYE_LIGHT) {
 	// if (true) {
-		shadowMapVisibility = false;
 		UpdateEyePosition(EYE_LIGHT);
 		// UpdateEyePosition(EYE_CAMERA); // ESEMPIO-PRESENTAZIONE
 		DrawScene(angle, scene);
 	} else {
-		// Si disegna la scena con o senza shadow mapping
-		if (shadowMapVisibility)
-			FirstStep();
+		FirstStep();
 		SecondStep();
 		ThirdStep();
 	}
@@ -567,18 +546,9 @@ void DisplayScene(void) {
 
 	if (performance) {
 		performance = false;
-		if (shadowMapVisibility) {
-			execution_end[SHADOW] = timer.GetTime();
-			execution_time[SHADOW] = (execution_end[SHADOW] - execution_start[SHADOW]);
-			writeTimeCSV(CSV_TIME_PATH, scene, SHADOW, shadowMapVisibility, animation_speed, execution_start, execution_end, execution_time);
-			// printf("SHADOW - start: %f, end: %f, tot: %f\n", execution_start[SHADOW], execution_end[SHADOW], execution_time[SHADOW]);
-		}
-		else {
-			execution_end[NO_SHADOW] = timer.GetTime();
-			execution_time[NO_SHADOW] = (execution_end[NO_SHADOW] - execution_start[NO_SHADOW]);
-			writeTimeCSV(CSV_TIME_PATH, scene, NO_SHADOW, shadowMapVisibility, animation_speed, execution_start, execution_end, execution_time);
-			// printf("NO_SHADOW - start: %f, end: %f, tot: %f\n", execution_start[NO_SHADOW], execution_end[NO_SHADOW], execution_time[NO_SHADOW]);
-		}
+		execution_end[SHADOW] = timer.GetTime();
+		execution_time[SHADOW] = (execution_end[SHADOW] - execution_start[SHADOW]);
+		writeTimeCSV(CSV_TIME_PATH, scene, SHADOW, animation_speed, execution_time);
 	}
 
 	glutPostRedisplay();
@@ -594,13 +564,6 @@ GLvoid keyboardOrdFunc(unsigned char key, int x, int y) {
         case 27:
         {
 			exit(0);
-		}
-		case 's':
-		case 'S':
-        {
-			toggleShadowMap();
-			performance = true;
-			break;
 		}
 		case 'r':
 		case 'R':
@@ -725,8 +688,7 @@ int main(int argc, char** argv) {
 
 	execution_end[INIT] = timer.GetTime();
 	execution_time[INIT] = execution_end[INIT] - execution_start[INIT];
-	writeTimeCSV(CSV_TIME_PATH, scene, INIT, false, 0.0f, execution_start, execution_end, execution_time);
-	// printf("INIT - start: %f, end: %f, tot: %f\n", execution_start[INIT], execution_end[INIT], execution_time[INIT]);
+	writeTimeCSV(CSV_TIME_PATH, scene, INIT, 0.0f, execution_time);
 
 	// shaderProgram = Shader("./Shaders/vertex.shader", "./Shaders/fragment.shader");
 
