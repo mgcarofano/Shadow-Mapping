@@ -101,7 +101,7 @@ float angle = 0.0f;
 int animation_speed = 0;
 
 // Scelta della scena da disegnare.
-int scene = SCENE3;
+int scene = SCENE1;
 
 // Execution performance
 #define CSV_TIME_PATH "../output/time-shadow_mapping.csv"
@@ -219,6 +219,8 @@ bool toggleEyePosition() {
 
 //Called for initiation
 bool Init(void) {
+
+	glPointSize(3.0);
 	
 	//Load identity modelview
 	glMatrixMode(GL_MODELVIEW);
@@ -260,19 +262,19 @@ bool Init(void) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	glFramebufferTexture2D(
-		GL_FRAMEBUFFER,
-		GL_DEPTH_ATTACHMENT,
-		GL_TEXTURE_2D,
-		shadowMapTexture,
-		0
-	);
+	// glFramebufferTexture2D(
+	// 	GL_FRAMEBUFFER,
+	// 	GL_DEPTH_ATTACHMENT,
+	// 	GL_TEXTURE_2D,
+	// 	shadowMapTexture,
+	// 	0
+	// );
 
-	// Verifica che il framebuffer sia stato creato correttamente
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		printf("Errore nella creazione del framebuffer.");
-		return false;
-	}
+	// // Verifica che il framebuffer sia stato creato correttamente
+	// if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+	// 	printf("Errore nella creazione del framebuffer.");
+	// 	return false;
+	// }
 
 	//Use the color as the ambient and diffuse material
 	glEnable(GL_COLOR_MATERIAL);
@@ -287,6 +289,8 @@ bool Init(void) {
 
 //1st step - Draw from light's point of view
 void FirstStep(void) {
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	// Si impostano le matrici della luce per 'GL_PROJECTION' e 'MODELVIEW'
 	// Use viewport the same size as the shadow map
@@ -316,7 +320,7 @@ void FirstStep(void) {
 //2nd step - Draw from camera's point of view with dim light
 void SecondStep(void) {
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
 
 	// Si impostano le matrici della camera per 'GL_PROJECTION' e 'MODELVIEW'
 	// Use viewport the same size as the window
@@ -379,16 +383,16 @@ void ThirdStep(void) {
 	glEnable(GL_TEXTURE_2D);
 
 	//Enable shadow comparison
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE_ARB, GL_COMPARE_R_TO_TEXTURE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 
 	//Shadow comparison should be true (ie not in shadow) if r<=texture
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 
 	//Shadow comparison should generate an INTENSITY result
-	glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE_ARB, GL_INTENSITY);
+	glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
 
 	//Set alpha test to discard false comparisons
-	glAlphaFunc(GL_GEQUAL, 1.0f);
+	glAlphaFunc(GL_GEQUAL, 0.99f);
 	glEnable(GL_ALPHA_TEST);
 
 	DrawScene(angle, scene);
@@ -494,14 +498,12 @@ void DisplayScene(void) {
 		execution_start[SHADOW] = timer.GetTime();
 	}
 
-	glPointSize(3.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	// Calculate the angle of spheres in scene from time in order to make an animation.
 	angle = timer.GetTime() * animation_speed;
 
 	if (eyePosition == EYE_LIGHT) {
 	// if (true) {
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		UpdateEyePosition(EYE_LIGHT);
 		// UpdateEyePosition(EYE_CAMERA); // ESEMPIO-PRESENTAZIONE
 		DrawScene(angle, scene);
@@ -524,16 +526,6 @@ void DisplayScene(void) {
 	//Restore other states
 	glDisable(GL_LIGHTING);
 	glDisable(GL_ALPHA_TEST);
-	
-	//Set matrices for ortho
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	gluOrtho2D(-1.0f, 1.0f, -1.0f, 1.0f);
-
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
 
 	//reset matrices
 	glMatrixMode(GL_PROJECTION);
