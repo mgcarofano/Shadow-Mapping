@@ -139,21 +139,23 @@ void WindowResize(int w, int h) {
 	windowHeight = h;
 
 	//Update the camera's projection matrix
+	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 		glLoadIdentity();
 		gluPerspective(45.0f, (float) windowWidth/windowHeight, 1.0f, 100.0f);
-		glGetFloatv(GL_MODELVIEW_MATRIX, cameraProjectionMatrix);
+		glGetFloatv(GL_PROJECTION_MATRIX, cameraProjectionMatrix);
 	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
 
 }
 
 void UpdateScene() {
-	glPushMatrix();
 
-		// Update 'cameraProjectionMatrix'
-		WindowResize(windowWidth, windowHeight);
-		
-		// Update 'cameraViewMatrix'
+	// Update 'cameraProjectionMatrix'
+	WindowResize(windowWidth, windowHeight);
+	
+	// Update 'cameraViewMatrix'
+	glPushMatrix();
 		glLoadIdentity();
 		gluLookAt(
 			cameraPositions[scene-1][0], cameraPositions[scene-1][1], cameraPositions[scene-1][2],
@@ -161,13 +163,19 @@ void UpdateScene() {
 			0.0f, 1.0f, 0.0f
 		);
 		glGetFloatv(GL_MODELVIEW_MATRIX, cameraViewMatrix);
-		
-		// Update 'lightProjectionMatrix'
+	glPopMatrix();
+	
+	// Update 'lightProjectionMatrix'
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
 		glLoadIdentity();
 		gluPerspective(45.0f, 1.0f, 2.0f, 8.0f);
-		glGetFloatv(GL_MODELVIEW_MATRIX, lightProjectionMatrix);
-		
-		// Update 'lightViewMatrix'
+		glGetFloatv(GL_PROJECTION_MATRIX, lightProjectionMatrix);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	
+	// Update 'lightViewMatrix'
+	glPushMatrix();
 		glLoadIdentity();
 		gluLookAt(
 			lightPosition.GetX(), lightPosition.GetY(), lightPosition.GetZ(),
@@ -175,8 +183,8 @@ void UpdateScene() {
 			0.0f, 1.0f, 0.0f
 		);
 		glGetFloatv(GL_MODELVIEW_MATRIX, lightViewMatrix);
-	
 	glPopMatrix();
+	
 }
 
 void UpdateEyePosition(int eyepos) {
