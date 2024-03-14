@@ -58,7 +58,10 @@ int eyePosition = EYE_CAMERA;
 GLfloat cameraPositions[3][3] = {
 	// {1.0f, 1.5f, -3.0f},	// ESEMPIO-PRESENTAZIONE
 	{-2.5f, 3.5f, -2.5f},	// SCENE1
+
+	// {4.0f, 4.0f, -1.0f}, // ESEMPIO-VINCOLO_FIELD_OF_VIEW
 	{-4.5f, 3.5f, -2.5f},	// SCENE2
+	
 	{-2.5f, 2.0f, -2.5f}	// SCENE3
 };
 
@@ -101,7 +104,7 @@ float angle = 0.0f;
 int animation_speed = 0;
 
 // Scelta della scena da disegnare.
-int scene = SCENE1;
+int scene = SCENE2;
 
 // Execution performance
 #define CSV_TIME_PATH "../output/time-shadow_mapping.csv"
@@ -368,6 +371,15 @@ void ThirdStep(void) {
 		biasMatrix
 		* lightProjectionMatrix
 		* lightViewMatrix;
+
+
+	/*
+		Per garantire la caratteristica di essere una tecnica image-based,
+		utilizziamo la modalità GL_EYE_LINEAR. In questo modo la texture
+		è fissata nello spazio immagine del viewport, cioè la texture
+		è indipendente rispetto alle trasformazioni di modellazione
+		degli oggetti in scena.
+	*/
 
 	//Set up texture coordinate generation.
 	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);

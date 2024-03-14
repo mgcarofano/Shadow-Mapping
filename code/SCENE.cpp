@@ -40,7 +40,7 @@ void Scene1(float angle) {
 		glColor3fv(GREEN);
 
 		// glTranslatef(0.45f, 1.0f, 0.0f); // ESEMPIO-PRESENTAZIONE
-		glTranslatef(0.45f, 1.0f, 0.45f);
+		glTranslatef(0.45f, 1.0f, 0.45f); // SCENE1
 		glutSolidSphere(0.2, 24, 24);
 
 		glTranslatef(-0.9f, 0.0f, 0.0f);
@@ -64,7 +64,8 @@ void Scene2() {
 	// BASE
 	glPushMatrix();
 		glColor3fv(BROWN);
-		glScalef(1.0f, 0.05f, 1.0f);
+		// glScalef(2.0f, 0.05f, 2.0f); // ESEMPIO-VINCOLO_FIELD_OF_VIEW
+		glScalef(1.0f, 0.05f, 1.0f); // SCENE2
 		glutSolidCube(4.5f);
 	glPopMatrix();
 
